@@ -1,37 +1,18 @@
-# Please choose from the below set of Docker commands to complete your Dockerfile:
+# Use the official Node.js image as the base
+FROM node:18-alpine
 
-# COPY
-# RUN
-# ADD
-# EXPOSE
-# FROM
-# CMD
-# PUSH
-# PULL
-# WORKDIR
-
-
-FROM golang:1.18 AS builder
-
+# Set working directory inside the container
 WORKDIR /app
 
-COPY main.go .
+# Copy package management files and install dependencies
+COPY package*.json ./
+RUN npm install --only=production
 
-RUN go mod init guestbook
-RUN go mod tidy
+# Copy all application code into the container
+COPY . .
 
-RUN go build -o main main.go
+# Expose port 3000 for the Guestbook application
+EXPOSE 3000
 
-FROM ubuntu:18.04
-
-<Please fill in the required Docker command> --from=builder /app/main /app/guestbook
-
-<Please fill in the required Docker command> public/index.html /app/public/index.html
-<Please fill in the required Docker command> public/script.js /app/public/script.js
-<Please fill in the required Docker command> public/style.css /app/public/style.css
-<Please fill in the required Docker command> public/jquery.min.js /app/public/jquery.min.js
-
-WORKDIR /app
-
-CMD ["./guestbook"]
-<Please fill in the required Docker command> 3000
+# Start the application
+CMD ["npm", "start"]
